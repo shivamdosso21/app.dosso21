@@ -1,70 +1,167 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 
 const Page: React.FC = () => {
+  const currentYear = new Date().getFullYear();
+  
+  const [mobileNumber, setMobileNumber] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [referralCode, setReferralCode] = useState("");
+  
+  const [mobileError, setMobileError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
+
+  const handleMobileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setMobileNumber(value);
+    if (value.length < 10) {
+      setMobileError("Number must be a 10 digit number");
+    } else {
+      setMobileError("");
+    }
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setEmail(value);
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(value)) {
+      setEmailError("Please enter a valid email address");
+    } else {
+      setEmailError("");
+    }
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setPassword(value);
+    if (value.length < 6) {
+      setPasswordError("Password must be at least 6 characters long");
+    } else {
+      setPasswordError("");
+    }
+  };
+
+  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setConfirmPassword(value);
+    if (value !== password) {
+      setConfirmPasswordError("Passwords do not match");
+    } else {
+      setConfirmPasswordError("");
+    }
+  };
+
+  const handleReferralChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setReferralCode(e.target.value);
+  };
+
   return (
-    <div className="flex flex-col justify-center items-center h-screen bg-white">
-      <div className="w-auto p-10">
+    <div className="flex flex-col h-screen w-screen justify-center items-center bg-white">
+      <div className="w-1/4 p-10 rounded shadow-xl">
         <div className="flex justify-between">
           <div className="flex flex-col">
-            <h1 className="font-bold text-xl">Free Registration</h1>
-            <p>Get your free Dosso21 account now</p>
+            <h1 className="text-xl">Welcome!🙏</h1>
+            <p className="text-xs">Continue with Dosso21</p>
           </div>
-          <div className="flex justify-end w-1/2">
+          <div className="flex justify-end w-1/4">
             <img src="/logo.jpg" alt="Logo" />
           </div>
         </div>
-        <div className="mt-10">
-          <h2>Mobile Number</h2>
-          <input
-            className="focus:border-transparent border-b-2 border-black focus:border-black focus:outline-none mt-1 p-2 w-full"
-            type="string"
-            placeholder="Enter your Number"
-          />
-          <h2>E-mail</h2>
-          <input
-            className="focus:border-transparent border-b-2 border-black focus:border-black focus:outline-none mt-1 p-2 w-full"
-            type="email"
-            placeholder="Enter your Email"
-          />
-          <h2>Password</h2>
-          <input
-            className="focus:border-transparent border-b-2 border-black focus:border-black focus:outline-none mt-1 p-2 w-full"
-            type="password"
-            placeholder="Enter your Password"
-          />
-          <h2>Confirm Password</h2>
-          <input
-            className="focus:border-transparent border-b-2 border-black focus:border-black focus:outline-none mt-1 p-2 w-full"
-            type="password"
-            placeholder="Confirm your Password"
-          />
-          <h2 className="mt-2">Referral Code (optional)</h2>
-          <input
-            className="focus:border-transparent border-b-2 border-black focus:border-black focus:outline-none mt-1 p-2 w-full"
-            type="text"
-            placeholder="Enter your Referral Code"
-          />
-          <div className="flex items-center mt-4">
-            <input id="example-checkbox" type="checkbox" className="form-checkbox h-5 w-5 text-blue-600" />
-            <label htmlFor="example-checkbox" className="ml-2 text-gray-700">I certify that I m above 18 years</label>
+        <div className="mt-10 gap-4 text-xs">
+          <div>
+            <h2>Mobile Number</h2>
+            <input
+              className={`mt-4 focus:border-transparent focus:outline-none mt-1 p-2 w-full ${mobileError ? "border-red-500" : ""}`}
+              type="text"
+              placeholder="Enter your Number"
+              value={mobileNumber}
+              onChange={handleMobileChange}
+              onBlur={() => {
+                if (mobileNumber.length < 10) {
+                  setMobileError("Number must be a 10 digit number");
+                } else {
+                  setMobileError("");
+                }
+              }}
+            />
+            {mobileError && <p className="text-red-500 text-xs">{mobileError}</p>}
           </div>
-          <button className="bg-black mt-4 w-1/4 p-1 text-white hover:bg-gray-800">
-            Get OTP
+          <div>
+            <h2>Email</h2>
+            <input
+              className={`mt-4 focus:border-transparent focus:outline-none mt-1 p-2 w-full ${emailError ? "border-red-500" : ""}`}
+              type="email"
+              placeholder="Enter your Email"
+              value={email}
+              onChange={handleEmailChange}
+              onBlur={() => {
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailPattern.test(email)) {
+                  setEmailError("Please enter a valid email address");
+                } else {
+                  setEmailError("");
+                }
+              }}
+            />
+            {emailError && <p className="text-red-500 text-xs">{emailError}</p>}
+          </div>
+          <div>
+            <h2>Password</h2>
+            <input
+              className={`mt-4 focus:border-transparent focus:outline-none mt-1 p-2 w-full ${passwordError ? "border-red-500" : ""}`}
+              type="password"
+              placeholder="Enter your Password"
+              value={password}
+              onChange={handlePasswordChange}
+            />
+            {passwordError && <p className="text-red-500 text-xs">{passwordError}</p>}
+          </div>
+          <div>
+            <h2>Confirm Password</h2>
+            <input
+              className={`mt-4 focus:border-transparent focus:outline-none mt-1 p-2 w-full ${confirmPasswordError ? "border-red-500" : ""}`}
+              type="password"
+              placeholder="Confirm your Password"
+              value={confirmPassword}
+              onChange={handleConfirmPasswordChange}
+            />
+            {confirmPasswordError && <p className="text-red-500 text-xs">{confirmPasswordError}</p>}
+          </div>
+          <div>
+            <h2>Referral Code (optional)</h2>
+            <input
+              className={`mt-4 focus:border-transparent focus:outline-none mt-1 p-2 w-full`}
+              type="text"
+              placeholder="Enter your Referral Code"
+              value={referralCode}
+              onChange={handleReferralChange}
+            />
+          </div>
+          
+          <button className="bg-gray-800 mt-4 w-full p-3 rounded text-white hover:bg-gray-600">
+            LOG IN NOW
           </button>
+
           <div className="flex justify-center">
-            <button className="mt-8">By registering, you agree to the Dosso21 Terms of Use</button>
+            <button className="mt-6">🔒<span className="underline">Forget your password</span></button>
           </div>
         </div>
       </div>
-      <div className="flex flex-col justify-center text-center mt-6">
+      <div className="grid justify-center text-center gap-4 mt-6 text-xs">
         <p>
-          Already have an account?
-          <span className="text-blue-500">Login</span>
+          Don't have an account?
+          <span className="ml-1 underline text-xs" style={{ color: '#50A5F1' }}>SIGNUP NOW</span>
         </p>
         <p className="mt-2">
-          ©2024 Dosso21, Developed by
-          <span className="text-customCyan text-xs">THEBRANDZMEDIA</span>
+          &copy; {currentYear} Dosso21, Developed by
+          <span className="text-xs" style={{ color: '#0DC3C7' }}> THEBRANDZMEDIA</span>
         </p>
+        <p className="mt-2 text-xs">Privacy Policy</p>
       </div>
     </div>
   );
