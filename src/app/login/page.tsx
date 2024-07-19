@@ -21,29 +21,7 @@ const Page: React.FC = () => {
     }
   };
 
-  const validatePassword = (password: string) => {
-    return (
-      password.length >= 6 &&
-      /[a-zA-Z]/.test(password) &&
-      /\d/.test(password) &&
-      /[!@#$%^&*(),.?":{}|<>]/.test(password)
-    );
-  };
 
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setPassword(value);
-
-    if (!value) {
-      setPasswordError("Password is required.");
-    } else if (!validatePassword(value)) {
-      setPasswordError(
-        "Password must be at least 6 characters long, contain at least 1 letter, 1 number, and 1 special character."
-      );
-    } else {
-      setPasswordError("");
-    }
-  };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -57,7 +35,7 @@ const Page: React.FC = () => {
   };
 
   const isMobileValid = mobileNumber.length === 10 && !mobileError;
-  const isPasswordValid = validatePassword(password);
+
 
   return (
     <div className="flex flex-col h-screen w-screen justify-center items-center bg-gray-300">
@@ -100,14 +78,13 @@ const Page: React.FC = () => {
               className={`mt-2 p-2 w-full border rounded select-none focus:border-black focus:outline-none ${
                 passwordError
                   ? "border-red-500"
-                  : isPasswordValid
-                  ? "border-green-500"
-                  : "border-gray-300"
+                  :  "border-gray-300"
+                  
+                  
               }`}
               type="password"
               placeholder="Enter your password"
-              value={password}
-              onChange={handlePasswordChange}
+        
             />
             {passwordError && (
               <p className="text-red-500 text-xs">{passwordError}</p>
@@ -119,7 +96,7 @@ const Page: React.FC = () => {
               (!mobileNumber || !password || mobileError || passwordError) &&
               "opacity-50 cursor-not-allowed"
             }`}
-            disabled={!isMobileValid || !isPasswordValid}
+            disabled={!isMobileValid}
           >
             LOG IN NOW
           </button>
@@ -127,9 +104,9 @@ const Page: React.FC = () => {
           <div className="flex justify-center">
             <button className="mt-6 select-none">
               🔒
-              <span className="underline select-none">
+             <Link href='/forget_password'> <span className="underline select-none">
                 Forget your password
-              </span>
+              </span></Link>
             </button>
           </div>
         </div>

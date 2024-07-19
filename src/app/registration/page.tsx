@@ -196,7 +196,7 @@ const Page: React.FC = () => {
                 confirmPasswordError
                   ? "border-red-500"
                   : isConfirmPasswordValid
-                  ? "border-green-500"
+                  ? "border-gray-300"
                   : "border-gray-300"
               }`}
               type="password"
@@ -209,7 +209,7 @@ const Page: React.FC = () => {
             )}
           </div>
           <div>
-            <h2 className="mt-4 select-none">Referal Code</h2>
+            <h2 className="mt-4 select-none">Referal Code <span className="top-0">(optional)</span></h2>
             <input
               className="mt-2 p-2 w-full border select-none rounded focus:border-black focus:outline-none "
               type="text"
@@ -244,7 +244,7 @@ const Page: React.FC = () => {
             </button>
           </div>
           <div className="mt-4 flex justify-center items-center text-gray-700 select-none">
-            By registering you agree with Dosso21 Term of usage
+            By registering you agree with Dosso21 <Link href="https://dosso21.com/terms-conditions/index.html"><span className="ml-1 underline">Term of usage</span></Link>
           </div>
         </div>
         <div className="grid justify-center text-center gap-4 mt-6 text-xs">
