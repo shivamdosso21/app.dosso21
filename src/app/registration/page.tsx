@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { BiShowAlt, BiHide } from "react-icons/bi";
 
 const Page: React.FC = () => {
   const currentYear = new Date().getFullYear();
@@ -12,6 +13,30 @@ const Page: React.FC = () => {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
+  const [otpDigits, setOtpDigits] = useState(["", "", "", "", "", ""]);
+  const [otpTimer, setOtpTimer] = useState(120); // 2 minutes timer
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpError, setOtpError] = useState("");
+  const [showPassword1, setShowPassword1] = useState(false);
+  const [showPassword2, setShowPassword2] = useState(false);
+  const [is18, setIs18] = useState(false);
+  const [ageCertificationError, setAgeCertificationError] = useState("");
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+
+    if (otpTimer > 0 && otpSent) {
+      timer = setTimeout(() => {
+        setOtpTimer((prevTimer) => prevTimer - 1);
+      }, 1000);
+    }
+
+    if (otpTimer === 0) {
+      setOtpSent(false);
+    }
+
+    return () => clearTimeout(timer);
+  }, [otpTimer, otpSent]);
 
   const handleMobileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -26,7 +51,6 @@ const Page: React.FC = () => {
   };
 
   const validateEmail = (email: string) => {
-    // Basic email validation regex
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
@@ -58,9 +82,7 @@ const Page: React.FC = () => {
     }
   };
 
-  const handleConfirmPasswordChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setConfirmPassword(value);
 
@@ -74,23 +96,48 @@ const Page: React.FC = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-   
     if (
       !mobileNumber ||
       !email ||
       !password ||
       !confirmPassword ||
+      !is18 ||
       mobileError ||
       emailError ||
       passwordError ||
-      confirmPasswordError
+      confirmPasswordError ||
+      otpSent
     ) {
+      if (!is18) {
+        setAgeCertificationError("You must certify that you're at least 18 years old.");
+      }
       alert("Please fill in all fields correctly.");
       return;
     }
 
-    console.log("Submitting form...");
-   
+    sendOtp();
+  };
+
+  const sendOtp = () => {
+    setOtpSent(true);
+    setOtpTimer(120);
+    setOtpDigits(["", "", "", "", "", ""]);
+    setOtpError("");
+  };
+
+  const handleOtpChange = (index: number, value: string) => {
+    if (/^\d*$/.test(value) && value.length <= 1) {
+      const newOtpDigits = [...otpDigits];
+      newOtpDigits[index] = value;
+      setOtpDigits(newOtpDigits);
+
+      if (index < otpDigits.length - 1 && value.length === 1) {
+        const nextInput = document.getElementById(`otpInput-${index + 1}`);
+        if (nextInput) {
+          nextInput.focus();
+        }
+      }
+    }
   };
 
   const validatePassword = (password: string) => {
@@ -105,7 +152,6 @@ const Page: React.FC = () => {
   const isMobileValid = mobileNumber.length === 10 && !mobileError;
   const isPasswordValid = validatePassword(password);
   const isConfirmPasswordValid = password === confirmPassword;
-
 
   return (
     <div className="flex flex-col h-screen w-screen justify-center items-center bg-gray-300">
@@ -131,7 +177,7 @@ const Page: React.FC = () => {
               Enter Mobile Number <span className="text-red-500">*</span>
             </h2>
             <input
-              className={`mt-2 p-2 w-full border select-none rounded focus:border-black focus:outline-none ${
+              className={`mt-2 p-2 w-full border select-none rounded focus:border-black focus:outline-none focus:shadow-xl focus:transition-transform duration-300 ${
                 mobileError
                   ? "border-red-500"
                   : isMobileValid
@@ -152,7 +198,7 @@ const Page: React.FC = () => {
               Email <span className="text-red-500">*</span>
             </h2>
             <input
-              className={`mt-2 p-2 w-full border select-none rounded focus:border-black focus:outline-none ${
+              className={`mt-2 p-2 w-full border select-none rounded focus:border-black focus:outline-none focus:shadow-xl focus:transition-transform duration-300${
                 emailError
                   ? "border-red-500"
                   : email
@@ -170,19 +216,28 @@ const Page: React.FC = () => {
             <h2 className="mt-4 select-none">
               Password <span className="text-red-500">*</span>
             </h2>
-            <input
-              className={`mt-2 p-2 w-full border select-none rounded focus:border-black focus:outline-none ${
-                passwordError
-                  ? "border-red-500"
-                  : isPasswordValid
-                  ? "border-green-500"
-                  : "border-gray-300"
-              }`}
-              type="password"
-              placeholder="Enter Password"
-              value={password}
-              onChange={handlePasswordChange}
-            />
+            <div className="relative">
+              <input
+                className={`mt-2 p-2 w-full border select-none rounded focus:border-black focus:outline-none focus:shadow-xl focus:transition-transform duration-300 ${
+                  passwordError
+                    ? "border-red-500"
+                    : isPasswordValid
+                    ? "border-green-500"
+                    : "border-gray-300"
+                }`}
+                type={showPassword1 ? "text" : "password"} // Conditionally render the input type
+                placeholder="Enter Password"
+                value={password}
+                onChange={handlePasswordChange}
+              />
+              <button
+                type="button"
+                className="absolute right-3 top-4 text-xl"
+                onClick={() => setShowPassword1(!showPassword1)}
+              >
+                {showPassword1 ? <BiShowAlt /> : <BiHide />}
+              </button>
+            </div>
             {passwordError && (
               <p className="text-red-500 text-xs">{passwordError}</p>
             )}
@@ -191,37 +246,123 @@ const Page: React.FC = () => {
             <h2 className="mt-4 select-none">
               Confirm Password <span className="text-red-500">*</span>
             </h2>
-            <input
-              className={`mt-2 p-2 w-full border select-none rounded focus:border-black focus:outline-none ${
-                confirmPasswordError
-                  ? "border-red-500"
-                  : isConfirmPasswordValid
-                  ? "border-gray-300"
-                  : "border-gray-300"
-              }`}
-              type="password"
-              placeholder="Confirm Password"
-              value={confirmPassword}
-              onChange={handleConfirmPasswordChange}
-            />
+            <div className="relative">
+              <input
+                className={`mt-2 p-2 w-full border select-none rounded focus:border-black focus:outline-none focus:shadow-xl focus:transition-transform duration-300 ${
+                  confirmPasswordError
+                    ? "border-red-500"
+                    : isConfirmPasswordValid
+                    ? "border-gray-300"
+                    : "border-gray-300"
+                }`}
+                type={showPassword2 ? "text" : "password"} // Conditionally render the input type
+                placeholder="Confirm Password"
+                value={confirmPassword}
+                onChange={handleConfirmPasswordChange}
+              />
+              <button
+                type="button"
+                className="absolute right-3 top-4 text-xl"
+                onClick={() => setShowPassword2(!showPassword2)}
+              >
+                {showPassword2 ? <BiShowAlt /> : <BiHide />}
+              </button>
+            </div>
             {confirmPasswordError && (
               <p className="text-red-500 text-xs">{confirmPasswordError}</p>
             )}
           </div>
           <div>
-            <h2 className="mt-4 select-none">Referal Code <span className="top-0">(optional)</span></h2>
+            <h2 className="mt-4 select-none">Referral Code (optional)</h2>
             <input
-              className="mt-2 p-2 w-full border select-none rounded focus:border-black focus:outline-none "
+              className="mt-2 p-2 w-full border select-none rounded focus:border-black focus:outline-none focus:shadow-xl focus:transition-transform duration-300"
               type="text"
-              placeholder="Enter Referal Code"
+              placeholder="Enter Referral Code"
             />
           </div>
           <div className="mt-4 select-none">
-            <input className="mr-2" type="checkbox" id="ageCertification" />
+            <input
+              className="mr-2"
+              type="checkbox"
+              id="ageCertification"
+              checked={is18}
+              onChange={(e) => {
+                setIs18(e.target.checked);
+                setAgeCertificationError("");
+              }}
+            />
             <label htmlFor="ageCertification">
-              I certified that I'm above 18 years old <span className="text-red-500">*</span>
+              I certify that I'm at least 18 years old <span className="text-red-500">*</span>
             </label>
+            {ageCertificationError && (
+              <p className="text-red-500 text-xs">{ageCertificationError}</p>
+            )}
           </div>
+          {otpSent && (
+             <form className="mt-4 relative bg-white text-white p-6 max-w-md rounded-lg shadow-lg flex flex-col items-center">
+             <span className="absolute top-4 right-4 bg-gray-800 text-black rounded-full w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-red-600 transition-colors">X</span>
+     
+             <div className="text-center mb-6">
+               <span className="text-2xl text-black font-bold">Two-Factor Verification</span>
+               <p className="mt-2 text-black text-lg">Enter the two-factor authentication code provided by the authenticator app</p>
+             </div>
+     
+             <div className="flex gap-2 mb-6">
+               {Array(6).fill(null).map((_, index) => (
+                 <input
+                   key={index}
+                   maxLength={1}
+                   type="tel"
+                   className="w-12 h-12 text-center text-lg bg-gray-800 border border-gray-600 rounded-md outline-none focus:border-white focus:ring-2 focus:ring-gray-600 transition-transform transform focus:scale-105"
+                   placeholder=""
+                 />
+               ))}
+             </div>
+     
+             <div className="flex gap-4">
+               <a href="#" className="bg-white text-black py-2 px-4 rounded-lg font-medium shadow-md hover:bg-gray-200 transition-colors">Verify</a>
+               <a href="#" className="border border-gray-600 text-gray-400 py-2 px-4 rounded-lg font-medium shadow-md hover:text-red-500 hover:border-red-500 transition-colors">Clear</a>
+             </div>
+           </form>
+            // <div className="flex flex-col justify-center items-center">
+            //   <h2 className="flex justify-center items-center mt-4 select-none">
+            //     Enter OTP sent to your Mobile Number
+            //   </h2>
+            //   <div className="flex mt-4">
+            //     {otpDigits.map((digit, index) => (
+            //       <input
+            //         key={index}
+            //         id={`otpInput-${index}`}
+            //         className={`mt-2 p-2 w-full border select-none rounded focus:border-black focus:outline-none focus:shadow-xl focus:transition-transform duration-300 ${
+            //           otpError ? "border-red-500" : ""
+            //         }`}
+            //         type="text"
+            //         placeholder=""
+            //         value={digit}
+            //         onChange={(e) => handleOtpChange(index, e.target.value)}
+            //         maxLength={1}
+            //       />
+            //     ))}
+            //   </div>
+            //   {otpError && (
+            //     <p className="text-red-500 text-xs mt-2">{otpError}</p>
+            //   )}
+            //   {otpTimer === 0 && (
+            //     <button
+            //       type="button"
+            //       className="bg-blue-500 mt-4 p-2 rounded text-white hover:bg-blue-700"
+            //       onClick={sendOtp}
+            //     >
+            //       Resend OTP
+            //     </button>
+            //   )}
+            //   {otpTimer > 0 && (
+            //     <p className="text-gray-600 text-xs mt-2">
+            //       Resend OTP in {otpTimer} seconds
+            //     </p>
+            //   )}
+            // </div>
+          )}
           <div className="flex justify-center items-center">
             <button
               type="submit"
@@ -230,22 +371,33 @@ const Page: React.FC = () => {
                   !email ||
                   !password ||
                   !confirmPassword ||
+                  !is18 ||
                   mobileError ||
                   emailError ||
                   passwordError ||
-                  confirmPasswordError) &&
+                  confirmPasswordError ||
+                  otpSent) &&
                 "opacity-50 cursor-not-allowed"
               }`}
               disabled={
-                !isMobileValid || !isPasswordValid || !isConfirmPasswordValid
+                !isMobileValid ||
+                !isPasswordValid ||
+                !isConfirmPasswordValid ||
+                !is18 ||
+                otpSent
               }
             >
-              GET OTP
+              {otpSent ? "VERIFY OTP" : "GET OTP"}
             </button>
           </div>
-          <div className="mt-4 flex justify-center items-center text-gray-700 select-none">
-            By registering you agree with Dosso21 <Link href="https://dosso21.com/terms-conditions/index.html"><span className="ml-1 underline">Term of usage</span></Link>
-          </div>
+          {!otpSent && (
+            <div className="mt-4 flex justify-center items-center text-gray-700 select-none">
+              By registering you agree with Dosso21{" "}
+              <Link href="https://dosso21.com/terms-conditions/index.html">
+                <span className="ml-1 underline">Terms of usage</span>
+              </Link>
+            </div>
+          )}
         </div>
         <div className="grid justify-center text-center gap-4 mt-6 text-xs">
           <p className="select-none">

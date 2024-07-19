@@ -42,7 +42,7 @@ const Page: React.FC = () => {
               Enter Mobile Number <span className="text-red-500">*</span>
             </h2>
             <input
-              className={`mt-2 p-2 w-full border select-none rounded focus:border-black focus:outline-none ${
+              className={`mt-2 p-2 w-full border select-none rounded focus:border-black focus:outline-none focus:shadow-xl focus:transition-transform duration-300 ${
                 mobileError
                   ? "border-red-500"
                   : isMobileValid

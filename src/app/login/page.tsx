@@ -1,6 +1,8 @@
 "use client";
 import Link from "next/link";
 import React, { useState } from "react";
+import { BiShowAlt } from "react-icons/bi";
+import { BiHide } from "react-icons/bi";
 
 const Page: React.FC = () => {
   const currentYear = new Date().getFullYear();
@@ -8,6 +10,7 @@ const Page: React.FC = () => {
   const [password, setPassword] = useState("");
   const [mobileError, setMobileError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [showPassword1, setShowPassword1] = useState(false);
 
   const handleMobileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -22,7 +25,10 @@ const Page: React.FC = () => {
   };
 
 
-
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setPassword(value);
+  }
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -56,7 +62,7 @@ const Page: React.FC = () => {
           <div>
             <h2 className="select-none">Enter Mobile Number</h2>
             <input
-              className={`mt-2 p-2 w-full border select-none rounded focus:border-black focus:outline-none ${
+              className={`mt-2 p-2 w-full border select-none rounded focus:border-black focus:outline-none focus:shadow-xl focus:transition-transform duration-300${
                 mobileError
                   ? "border-red-500"
                   : isMobileValid
@@ -72,20 +78,29 @@ const Page: React.FC = () => {
               <p className="text-red-500 text-xs">{mobileError}</p>
             )}
           </div>
-          <div>
-            <h2 className="mt-4 select-none">Password</h2>
-            <input
-              className={`mt-2 p-2 w-full border rounded select-none focus:border-black focus:outline-none ${
-                passwordError
-                  ? "border-red-500"
-                  :  "border-gray-300"
-                  
-                  
-              }`}
-              type="password"
-              placeholder="Enter your password"
-        
-            />
+           <div>
+            <h2 className="mt-4 select-none">
+              Password <span className="text-red-500">*</span>
+            </h2>
+            <div className="relative">
+              <input
+                className="mt-2 p-2 w-full border select-none rounded focus:border-black focus:outline-none focus:shadow-xl focus:transition-transform duration-300"
+                 
+                
+                type={showPassword1 ? "text" : "password"} // Conditionally render the input type
+                placeholder="Enter Password"
+                value={password}
+                onChange={handlePasswordChange}
+                
+              />
+              <button
+                type="button"
+                className="absolute right-3 top-4 text-xl"
+                onClick={() => setShowPassword1(!showPassword1)}
+              >
+                {showPassword1 ? <BiShowAlt/> : <BiHide/>}
+              </button>
+            </div>
             {passwordError && (
               <p className="text-red-500 text-xs">{passwordError}</p>
             )}
