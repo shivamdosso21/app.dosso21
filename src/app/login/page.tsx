@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import React, { useState } from "react";
 
 const Page: React.FC = () => {
@@ -7,7 +8,7 @@ const Page: React.FC = () => {
   const [password, setPassword] = useState("");
   const [mobileError, setMobileError] = useState("");
   const [passwordError, setPasswordError] = useState("");
- 
+
   const handleMobileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (value.length <= 10 && /^\d*$/.test(value)) {
@@ -23,9 +24,9 @@ const Page: React.FC = () => {
   const validatePassword = (password: string) => {
     return (
       password.length >= 6 &&
-      /[a-zA-Z]/.test(password) && 
-      /\d/.test(password) &&        
-      /[!@#$%^&*(),.?":{}|<>]/.test(password) 
+      /[a-zA-Z]/.test(password) &&
+      /\d/.test(password) &&
+      /[!@#$%^&*(),.?":{}|<>]/.test(password)
     );
   };
 
@@ -33,11 +34,26 @@ const Page: React.FC = () => {
     const value = e.target.value;
     setPassword(value);
 
-    if (!validatePassword(value)) {
-      setPasswordError("Password must be at least 6 characters long, contain at least 1 letter, 1 number, and 1 special character.");
+    if (!value) {
+      setPasswordError("Password is required.");
+    } else if (!validatePassword(value)) {
+      setPasswordError(
+        "Password must be at least 6 characters long, contain at least 1 letter, 1 number, and 1 special character."
+      );
     } else {
       setPasswordError("");
     }
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!mobileNumber || !password || mobileError || passwordError) {
+      alert("Please fill in both fields correctly.");
+      return;
+    }
+
+    console.log("Logging in...");
   };
 
   const isMobileValid = mobileNumber.length === 10 && !mobileError;
@@ -45,56 +61,98 @@ const Page: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen w-screen justify-center items-center bg-gray-300">
-      <div className="w-1/4 p-10 rounded shadow-2xl bg-white">
+      <form
+        onSubmit={handleSubmit}
+        className="w-full max-w-md p-10 rounded shadow-2xl bg-white mx-4"
+      >
         <div className="flex justify-between">
           <div className="flex flex-col">
-            <h1 className="text-xl">Welcome!🙏</h1>
-            <p className="text-xs">Continue with Dosso21</p>
+            <h1 className="text-xl select-none">Welcome!🙏</h1>
+            <p className="text-xs select-none">Continue with Dosso21</p>
           </div>
-          <div className="flex justify-end w-1/4">
-            <img src="/logo.jpg" alt="" />
+          <div className="flex justify-end w-1/4 select-none">
+            <img src="/logo.jpg" alt="Logo" />
           </div>
         </div>
         <div className="mt-10 gap-4 text-xs">
           <div>
-            <h2>Enter Mobile Number</h2>
+            <h2 className="select-none">Enter Mobile Number</h2>
             <input
-              className={`mt-4 p-2 w-full border rounded focus:border-black focus:outline-none ${mobileError ? "border-red-500" : isMobileValid ? "border-green-500" : "border-gray-300"}`}
+              className={`mt-2 p-2 w-full border select-none rounded focus:border-black focus:outline-none ${
+                mobileError
+                  ? "border-red-500"
+                  : isMobileValid
+                  ? "border-green-500"
+                  : "border-gray-300"
+              }`}
               type="text"
               placeholder="Enter your Mobile Number"
               value={mobileNumber}
               onChange={handleMobileChange}
             />
-            {mobileError && <p className="text-red-500 text-xs">{mobileError}</p>}
+            {mobileError && (
+              <p className="text-red-500 text-xs">{mobileError}</p>
+            )}
           </div>
-          <h2 className="mt-2">Password</h2>
-          <input
-            className={`mt-4 p-2 w-full border rounded focus:border-black focus:outline-none ${passwordError ? "border-red-500" : isPasswordValid ? "border-green-500" : "border-gray-300"}`}
-            type="password"
-            placeholder="Enter your password"
-            value={password}
-            onChange={handlePasswordChange}
-          />
-          {passwordError && <p className="text-red-500 text-xs">{passwordError}</p>}
-          <button className="bg-gray-800 mt-4 w-full p-3 rounded text-white hover:bg-gray-600">
+          <div>
+            <h2 className="mt-4 select-none">Password</h2>
+            <input
+              className={`mt-2 p-2 w-full border rounded select-none focus:border-black focus:outline-none ${
+                passwordError
+                  ? "border-red-500"
+                  : isPasswordValid
+                  ? "border-green-500"
+                  : "border-gray-300"
+              }`}
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={handlePasswordChange}
+            />
+            {passwordError && (
+              <p className="text-red-500 text-xs">{passwordError}</p>
+            )}
+          </div>
+          <button
+            type="submit"
+            className={`bg-gray-800 mt-6 w-full p-3 select-none rounded text-white hover:bg-gray-600 ${
+              (!mobileNumber || !password || mobileError || passwordError) &&
+              "opacity-50 cursor-not-allowed"
+            }`}
+            disabled={!isMobileValid || !isPasswordValid}
+          >
             LOG IN NOW
           </button>
 
           <div className="flex justify-center">
-            <button className="mt-6">🔒<span className="underline">Forget your password</span></button>
+            <button className="mt-6 select-none">
+              🔒
+              <span className="underline select-none">
+                Forget your password
+              </span>
+            </button>
           </div>
         </div>
         <div className="grid justify-center text-center gap-4 mt-6 text-xs">
-          <p>
+          <p className="select-none">
             Don't have an account?
-            <span className="ml-1 underline text-xs" style={{ color: '#50A5F1' }}>SIGNUP NOW</span>
+            <Link href="/registration">
+              <span
+                className="ml-1 underline text-xs select-none"
+                style={{ color: "#50A5F1" }}
+              >
+                SIGNUP NOW
+              </span>
+            </Link>
           </p>
-          <p className="mt-1">
+          <p className="mt-1 select-none">
             &copy; {currentYear} Dosso21, Developed by
-            <span className="text-xs" style={{ color: '#0DC3C7' }}> THEBRANDZMEDIA</span>
+            <span className="ml-2 text-xs select-none" style={{ color: "#0DC3C7" }}>
+              THEBRANDZMEDIA
+            </span>
           </p>
         </div>
-      </div>
+      </form>
     </div>
   );
 };
