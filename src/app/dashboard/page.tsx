@@ -53,27 +53,30 @@ const Page: React.FC = () => {
             <div>
               <h1 className="font-bold">SHAGUN51 (24-25-001)</h1>
             </div>
-            <div>
-                
+            <div></div>
+            <div className="flex justify-center">
+              <button className="bg-black text-white w-full rounded-2xl p-1">
+                PARTICIPATE
+              </button>
             </div>
             <div className="flex justify-center">
-              <button className="bg-black text-white w-full rounded-2xl p-1">PARTICIPATE</button>
-            </div>
-            <div className="flex justify-center">
-                <h2>72 Participants</h2>
+              <h2>72 Participants</h2>
             </div>
           </div>
           <div className="h-40 p-2 w-1/4 bg-white border rounded-xl border-black grid">
-          <div>
+            <div>
               <h1 className="font-bold">UPCOMINGS</h1>
             </div>
             <div></div>
             <div className="flex justify-center">
-              <button className="bg-black text-white w-full rounded-2xl p-1">COMING SOON</button>
+              <button className="bg-black text-white w-full rounded-2xl p-1">
+                COMING SOON
+              </button>
             </div>
             <div className="flex justify-center">
-                <h2>72 Participants</h2>
-            </div></div>
+              <h2>72 Participants</h2>
+            </div>
+          </div>
         </div>
         <div className="bg-black h-20 mt-auto text-white flex justify-evenly">
           <button>
