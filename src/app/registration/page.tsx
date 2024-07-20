@@ -14,9 +14,8 @@ const Page: React.FC = () => {
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const [otpDigits, setOtpDigits] = useState(["", "", "", "", "", ""]);
-  const [otpTimer, setOtpTimer] = useState(120); // 2 minutes timer
+  const [otpTimer, setOtpTimer] = useState(120); 
   const [otpSent, setOtpSent] = useState(false);
-  const [otpError, setOtpError] = useState("");
   const [showPassword1, setShowPassword1] = useState(false);
   const [showPassword2, setShowPassword2] = useState(false);
   const [is18, setIs18] = useState(false);
@@ -82,7 +81,9 @@ const Page: React.FC = () => {
     }
   };
 
-  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleConfirmPasswordChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const value = e.target.value;
     setConfirmPassword(value);
 
@@ -109,10 +110,11 @@ const Page: React.FC = () => {
       otpSent
     ) {
       if (!is18) {
-        setAgeCertificationError("You must certify that you're at least 18 years old.");
+        setAgeCertificationError(
+          "You must certify that you're at least 18 years old."
+        );
       }
-      alert("Please fill in all fields correctly.");
-      return;
+     
     }
 
     sendOtp();
@@ -122,7 +124,6 @@ const Page: React.FC = () => {
     setOtpSent(true);
     setOtpTimer(120);
     setOtpDigits(["", "", "", "", "", ""]);
-    setOtpError("");
   };
 
   const handleOtpChange = (index: number, value: string) => {
@@ -152,6 +153,8 @@ const Page: React.FC = () => {
   const isMobileValid = mobileNumber.length === 10 && !mobileError;
   const isPasswordValid = validatePassword(password);
   const isConfirmPasswordValid = password === confirmPassword;
+  const isOtpComplete = otpDigits.every((digit) => digit !== "");
+  const isDisabled = otpTimer > 0;
 
   return (
     <div className="flex flex-col h-screen w-screen justify-center items-center bg-gray-300">
@@ -177,7 +180,7 @@ const Page: React.FC = () => {
               Enter Mobile Number <span className="text-red-500">*</span>
             </h2>
             <input
-              className={`mt-2 p-2 w-full border select-none rounded focus:border-black focus:outline-none focus:shadow-xl focus:transition-transform duration-300 ${
+              className={`mt-2 p-2 w-full border select-none rounded focus:border-black focus:outline-none focus:shadow-xl focus:ring-gray-600 transition-transform transform focus:scale-105 ${
                 mobileError
                   ? "border-red-500"
                   : isMobileValid
@@ -198,7 +201,7 @@ const Page: React.FC = () => {
               Email <span className="text-red-500">*</span>
             </h2>
             <input
-              className={`mt-2 p-2 w-full border select-none rounded focus:border-black focus:outline-none focus:shadow-xl focus:transition-transform duration-300${
+              className={`mt-2 p-2 w-full border select-none rounded focus:border-black focus:outline-none focus:shadow-xl focus:ring-gray-600 transition-transform transform focus:scale-105 ${
                 emailError
                   ? "border-red-500"
                   : email
@@ -218,14 +221,14 @@ const Page: React.FC = () => {
             </h2>
             <div className="relative">
               <input
-                className={`mt-2 p-2 w-full border select-none rounded focus:border-black focus:outline-none focus:shadow-xl focus:transition-transform duration-300 ${
+                className={`mt-2 p-2 w-full border select-none rounded focus:border-black focus:outline-none focus:shadow-xl focus:ring-gray-600 transition-transform transform focus:scale-105 ${
                   passwordError
                     ? "border-red-500"
                     : isPasswordValid
                     ? "border-green-500"
                     : "border-gray-300"
                 }`}
-                type={showPassword1 ? "text" : "password"} // Conditionally render the input type
+                type={showPassword1 ? "text" : "password"}
                 placeholder="Enter Password"
                 value={password}
                 onChange={handlePasswordChange}
@@ -248,14 +251,14 @@ const Page: React.FC = () => {
             </h2>
             <div className="relative">
               <input
-                className={`mt-2 p-2 w-full border select-none rounded focus:border-black focus:outline-none focus:shadow-xl focus:transition-transform duration-300 ${
+                className={`mt-2 p-2 w-full border select-none rounded focus:border-black focus:outline-none focus:shadow-xl focus:ring-gray-600 transition-transform transform focus:scale-105 ${
                   confirmPasswordError
                     ? "border-red-500"
                     : isConfirmPasswordValid
                     ? "border-gray-300"
                     : "border-gray-300"
                 }`}
-                type={showPassword2 ? "text" : "password"} // Conditionally render the input type
+                type={showPassword2 ? "text" : "password"}
                 placeholder="Confirm Password"
                 value={confirmPassword}
                 onChange={handleConfirmPasswordChange}
@@ -275,7 +278,7 @@ const Page: React.FC = () => {
           <div>
             <h2 className="mt-4 select-none">Referral Code (optional)</h2>
             <input
-              className="mt-2 p-2 w-full border select-none rounded focus:border-black focus:outline-none focus:shadow-xl focus:transition-transform duration-300"
+              className="mt-2 p-2 w-full border select-none rounded focus:border-black focus:outline-none focus:shadow-xl focus:ring-gray-600 transition-transform transform focus:scale-105"
               type="text"
               placeholder="Enter Referral Code"
             />
@@ -292,76 +295,56 @@ const Page: React.FC = () => {
               }}
             />
             <label htmlFor="ageCertification">
-              I certify that I'm at least 18 years old <span className="text-red-500">*</span>
+              I certify that I'm at least 18 years old{" "}
+              <span className="text-red-500">*</span>
             </label>
             {ageCertificationError && (
               <p className="text-red-500 text-xs">{ageCertificationError}</p>
             )}
           </div>
           {otpSent && (
-             <form className="mt-4 relative bg-white text-white p-6 max-w-md rounded-lg shadow-lg flex flex-col items-center">
-             <span className="absolute top-4 right-4 bg-gray-800 text-black rounded-full w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-red-600 transition-colors">X</span>
-     
-             <div className="text-center mb-6">
-               <span className="text-2xl text-black font-bold">Two-Factor Verification</span>
-               <p className="mt-2 text-black text-lg">Enter the two-factor authentication code provided by the authenticator app</p>
-             </div>
-     
-             <div className="flex gap-2 mb-6">
-               {Array(6).fill(null).map((_, index) => (
-                 <input
-                   key={index}
-                   maxLength={1}
-                   type="tel"
-                   className="w-12 h-12 text-center text-lg bg-gray-800 border border-gray-600 rounded-md outline-none focus:border-white focus:ring-2 focus:ring-gray-600 transition-transform transform focus:scale-105"
-                   placeholder=""
-                 />
-               ))}
-             </div>
-     
-             <div className="flex gap-4">
-               <a href="#" className="bg-white text-black py-2 px-4 rounded-lg font-medium shadow-md hover:bg-gray-200 transition-colors">Verify</a>
-               <a href="#" className="border border-gray-600 text-gray-400 py-2 px-4 rounded-lg font-medium shadow-md hover:text-red-500 hover:border-red-500 transition-colors">Clear</a>
-             </div>
-           </form>
-            // <div className="flex flex-col justify-center items-center">
-            //   <h2 className="flex justify-center items-center mt-4 select-none">
-            //     Enter OTP sent to your Mobile Number
-            //   </h2>
-            //   <div className="flex mt-4">
-            //     {otpDigits.map((digit, index) => (
-            //       <input
-            //         key={index}
-            //         id={`otpInput-${index}`}
-            //         className={`mt-2 p-2 w-full border select-none rounded focus:border-black focus:outline-none focus:shadow-xl focus:transition-transform duration-300 ${
-            //           otpError ? "border-red-500" : ""
-            //         }`}
-            //         type="text"
-            //         placeholder=""
-            //         value={digit}
-            //         onChange={(e) => handleOtpChange(index, e.target.value)}
-            //         maxLength={1}
-            //       />
-            //     ))}
-            //   </div>
-            //   {otpError && (
-            //     <p className="text-red-500 text-xs mt-2">{otpError}</p>
-            //   )}
-            //   {otpTimer === 0 && (
-            //     <button
-            //       type="button"
-            //       className="bg-blue-500 mt-4 p-2 rounded text-white hover:bg-blue-700"
-            //       onClick={sendOtp}
-            //     >
-            //       Resend OTP
-            //     </button>
-            //   )}
-            //   {otpTimer > 0 && (
-            //     <p className="text-gray-600 text-xs mt-2">
-            //       Resend OTP in {otpTimer} seconds
-            //     </p>
-            //   )}
-            // </div>
+            <div className="mt-4 relative bg-white p-6 max-w-md rounded-xl flex flex-col items-center">
+              <div className="text-center mb-6">
+                <p className="mt-2 text-black text-lg">
+                  Enter the OTP sent to your mobile number
+                </p>
+              </div>
+
+              <div className="flex gap-2 mb-6">
+                {Array(6)
+                  .fill(null)
+                  .map((_, index) => (
+                    <input
+                      key={index}
+                      maxLength={1}
+                      type="tel"
+                      id={`otpInput-${index}`}
+                      value={otpDigits[index]}
+                      onChange={(e) => handleOtpChange(index, e.target.value)}
+                      className="w-12 h-12 text-center border border-black text-black text-lg bg-gray-200 rounded-xl focus:border-black focus:ring-2 focus:ring-gray-600 transition-transform transform focus:scale-105"
+                    />
+                  ))}
+              </div>
+
+              <div className="flex gap-4">
+                <a
+                  href="#"
+                  className={`py-2 px-4 rounded-lg font-medium transition-colors ${
+                    isDisabled
+                      ? "bg-white text-black hover:bg-gray-200"
+                      : "bg-green-500 text-white hover:bg-green-700"
+                  }`}
+                  onClick={() => {
+                    if (!isDisabled) {
+                      console.log("Resend button clicked");
+                    }
+                  }}
+                  style={{ pointerEvents: isDisabled ? "none" : "auto" }}
+                >
+                  {isDisabled ? `Resend : 00:00:${otpTimer}` : "Resend"}
+                </a>
+              </div>
+            </div>
           )}
           <div className="flex justify-center items-center">
             <button
@@ -376,7 +359,7 @@ const Page: React.FC = () => {
                   emailError ||
                   passwordError ||
                   confirmPasswordError ||
-                  otpSent) &&
+                  (otpSent && !isOtpComplete)) &&
                 "opacity-50 cursor-not-allowed"
               }`}
               disabled={
@@ -384,7 +367,7 @@ const Page: React.FC = () => {
                 !isPasswordValid ||
                 !isConfirmPasswordValid ||
                 !is18 ||
-                otpSent
+                (otpSent && !isOtpComplete)
               }
             >
               {otpSent ? "VERIFY OTP" : "GET OTP"}
@@ -413,7 +396,10 @@ const Page: React.FC = () => {
           </p>
           <p className="mt-1 select-none">
             &copy; {currentYear} Dosso21, Developed by
-            <span className="ml-2 text-xs select-none" style={{ color: "#0DC3C7" }}>
+            <span
+              className="ml-2 text-xs select-none"
+              style={{ color: "#0DC3C7" }}
+            >
               THEBRANDZMEDIA
             </span>
           </p>

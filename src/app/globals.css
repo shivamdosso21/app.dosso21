@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+
+.custom-confirm-button {
+  background-color: black !important;
+  color: white !important;
+  border: none !important;
+}
+
+.custom-confirm-button:hover {
+  background-color: #333 !important;
+}
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;

@@ -9,9 +9,8 @@ const Page: React.FC = () => {
   const [mobileNumber, setMobileNumber] = useState("");
   const [password, setPassword] = useState("");
   const [mobileError, setMobileError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-  const [showPassword1, setShowPassword1] = useState(false);
 
+  const [showPassword1, setShowPassword1] = useState(false);
   const handleMobileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (value.length <= 10 && /^\d*$/.test(value)) {
@@ -24,15 +23,14 @@ const Page: React.FC = () => {
     }
   };
 
-
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setPassword(value);
-  }
+  };
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!mobileNumber || !password || mobileError || passwordError) {
+    if (!mobileNumber || !password || mobileError) {
       alert("Please fill in both fields correctly.");
       return;
     }
@@ -41,7 +39,6 @@ const Page: React.FC = () => {
   };
 
   const isMobileValid = mobileNumber.length === 10 && !mobileError;
-
 
   return (
     <div className="flex flex-col h-screen w-screen justify-center items-center bg-gray-300">
@@ -60,9 +57,11 @@ const Page: React.FC = () => {
         </div>
         <div className="mt-10 gap-4 text-xs">
           <div>
-            <h2 className="select-none">Enter Mobile Number</h2>
+            <h2 className="select-none">
+              Enter Mobile Number<span className="text-red-500">*</span>
+            </h2>
             <input
-              className={`mt-2 p-2 w-full border select-none rounded focus:border-black focus:outline-none focus:shadow-xl focus:transition-transform duration-300${
+              className={`mt-2 p-2 w-full border select-none rounded focus:border-black focus:outline-none focus:shadow-xl focus:ring-gray-600 transition-transform transform focus:scale-105 ${
                 mobileError
                   ? "border-red-500"
                   : isMobileValid
@@ -78,37 +77,31 @@ const Page: React.FC = () => {
               <p className="text-red-500 text-xs">{mobileError}</p>
             )}
           </div>
-           <div>
+          <div>
             <h2 className="mt-4 select-none">
               Password <span className="text-red-500">*</span>
             </h2>
             <div className="relative">
               <input
-                className="mt-2 p-2 w-full border select-none rounded focus:border-black focus:outline-none focus:shadow-xl focus:transition-transform duration-300"
-                 
-                
-                type={showPassword1 ? "text" : "password"} // Conditionally render the input type
+                className="mt-2 p-2 w-full border select-none rounded focus:border-black focus:outline-none focus:shadow-xl focus:ring-gray-600 transition-transform transform focus:scale-105"
+                type={showPassword1 ? "text" : "password"}
                 placeholder="Enter Password"
                 value={password}
                 onChange={handlePasswordChange}
-                
               />
               <button
                 type="button"
                 className="absolute right-3 top-4 text-xl"
                 onClick={() => setShowPassword1(!showPassword1)}
               >
-                {showPassword1 ? <BiShowAlt/> : <BiHide/>}
+                {showPassword1 ? <BiShowAlt /> : <BiHide />}
               </button>
             </div>
-            {passwordError && (
-              <p className="text-red-500 text-xs">{passwordError}</p>
-            )}
           </div>
           <button
             type="submit"
             className={`bg-gray-800 mt-6 w-full p-3 select-none rounded text-white hover:bg-gray-600 ${
-              (!mobileNumber || !password || mobileError || passwordError) &&
+              (!mobileNumber || !password || mobileError) &&
               "opacity-50 cursor-not-allowed"
             }`}
             disabled={!isMobileValid}
@@ -119,9 +112,11 @@ const Page: React.FC = () => {
           <div className="flex justify-center">
             <button className="mt-6 select-none">
               🔒
-             <Link href='/forget_password'> <span className="underline select-none">
-                Forget your password
-              </span></Link>
+              <Link href="/forget_password">
+                <span className="underline select-none">
+                  Forget your password
+                </span>
+              </Link>
             </button>
           </div>
         </div>
@@ -139,7 +134,10 @@ const Page: React.FC = () => {
           </p>
           <p className="mt-1 select-none">
             &copy; {currentYear} Dosso21, Developed by
-            <span className="ml-2 text-xs select-none" style={{ color: "#0DC3C7" }}>
+            <span
+              className="ml-2 text-xs select-none"
+              style={{ color: "#0DC3C7" }}
+            >
               THEBRANDZMEDIA
             </span>
           </p>
