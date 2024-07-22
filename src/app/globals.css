@@ -14,3 +14,6 @@
 }
 
 
+.hover-active {
+  @apply bg-gray-700 text-white w-full scale-105;
+}

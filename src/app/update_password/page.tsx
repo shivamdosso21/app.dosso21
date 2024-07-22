@@ -14,7 +14,6 @@ const Page: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const [showPassword2, setShowPassword2] = useState(false);
- 
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -53,10 +52,10 @@ const Page: React.FC = () => {
       customClass: {
         confirmButton: "custom-confirm-button",
       },
-    
+
       preConfirm: () => {
-        window.location.href = '/login'; 
-      }
+        window.location.href = "/login";
+      },
     });
   };
 

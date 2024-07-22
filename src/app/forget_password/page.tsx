@@ -8,7 +8,7 @@ const Page: React.FC = () => {
   const [mobileError, setMobileError] = useState("");
   const [showOtp, setShowOtp] = useState(false);
   const [otpDigits, setOtpDigits] = useState(["", "", "", "", "", ""]);
-  const [otpTimer, setOtpTimer] = useState(0); 
+  const [otpTimer, setOtpTimer] = useState(0);
   const [otpSent, setOtpSent] = useState(false);
 
   useEffect(() => {
@@ -16,7 +16,7 @@ const Page: React.FC = () => {
 
     if (otpTimer > 0 && otpSent) {
       timer = setTimeout(() => {
-        setOtpTimer(prevTimer => prevTimer - 1);
+        setOtpTimer((prevTimer) => prevTimer - 1);
       }, 1000);
     } else if (otpTimer === 0) {
       setOtpSent(false);
@@ -40,16 +40,16 @@ const Page: React.FC = () => {
   };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); 
+    e.preventDefault();
     if (isMobileValid) {
       setShowOtp(true);
-      sendOtp(); 
+      sendOtp();
     }
   };
 
   const sendOtp = () => {
     setOtpSent(true);
-    setOtpTimer(120); 
+    setOtpTimer(120);
     setOtpDigits(["", "", "", "", "", ""]);
   };
 
@@ -60,7 +60,9 @@ const Page: React.FC = () => {
       setOtpDigits(newOtpDigits);
 
       if (index < otpDigits.length - 1 && value.length === 1) {
-        const nextInput = document.getElementById(`otpInput-${index + 1}`) as HTMLInputElement;
+        const nextInput = document.getElementById(
+          `otpInput-${index + 1}`
+        ) as HTMLInputElement;
         if (nextInput) {
           nextInput.focus();
         }
@@ -75,17 +77,22 @@ const Page: React.FC = () => {
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+    return `${minutes.toString().padStart(2, "0")}:${secs
+      .toString()
+      .padStart(2, "0")}`;
   };
 
   const isMobileValid = mobileNumber.length === 10 && !mobileError;
-  const isOtpComplete = otpDigits.every(digit => digit !== "");
+  const isOtpComplete = otpDigits.every((digit) => digit !== "");
   const isDisabled = otpTimer > 0;
 
   return (
     <div className="flex flex-col h-screen w-screen justify-center items-center bg-gray-300">
       {!showOtp ? (
-        <form onSubmit={handleSubmit} className="w-full max-w-md p-10 rounded shadow-2xl bg-white mx-4">
+        <form
+          onSubmit={handleSubmit}
+          className="w-full max-w-md p-10 rounded shadow-2xl bg-white mx-4"
+        >
           <div className="flex justify-between">
             <div className="flex flex-col">
               <h1 className="text-xl select-none">Forget Password</h1>
@@ -185,7 +192,7 @@ const Page: React.FC = () => {
                 }`}
                 onClick={() => {
                   if (!isDisabled) {
-                    sendOtp(); 
+                    sendOtp();
                   }
                 }}
                 style={{ pointerEvents: isDisabled ? "none" : "auto" }}
@@ -194,12 +201,14 @@ const Page: React.FC = () => {
               </a>
             </div>
             {isOtpComplete && (
-              <Link href='/update_password'><button
-              onClick={handleVerify}
-              className="bg-gray-700 w-full p-3 select-none rounded-xl text-white hover:bg-gray-600"
-            >
-              VERIFY
-            </button></Link>
+              <Link href="/update_password">
+                <button
+                  onClick={handleVerify}
+                  className="bg-gray-700 w-full p-3 select-none rounded-xl text-white hover:bg-gray-600"
+                >
+                  VERIFY
+                </button>
+              </Link>
             )}
           </div>
         </div>

@@ -14,7 +14,7 @@ const Page: React.FC = () => {
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const [otpDigits, setOtpDigits] = useState(["", "", "", "", "", ""]);
-  const [otpTimer, setOtpTimer] = useState(120); 
+  const [otpTimer, setOtpTimer] = useState(120);
   const [otpSent, setOtpSent] = useState(false);
   const [showPassword1, setShowPassword1] = useState(false);
   const [showPassword2, setShowPassword2] = useState(false);
@@ -114,7 +114,6 @@ const Page: React.FC = () => {
           "You must certify that you're at least 18 years old."
         );
       }
-     
     }
 
     sendOtp();
